@@ -1,1 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jackie's Affiliate Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+--blush: #f2c4ce;
+--rose: #e8899a;
+--deep-rose: #c45c72;
+--cream: #fdf6f0;
+--warm-white: #fffaf7;
+--charcoal: #2d2020;
+--muted: #9a7c7c;
+--gold: #d4a96a;
+--soft-gold: #f0dfc0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: 'DM Sans', sans-serif;
+background: var(--warm-white);
+color: var(--charcoal);
+min-height: 100vh;
+}
+
+header {
+background: var(--charcoal);
+padding: 18px 32px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.logo {
+font-family: 'Playfair Display', serif;
+font-size: 1.4rem;
+color: var(--blush);
+letter-spacing: 0.02em;
+}
+
+.logo span { color: var(--gold); font-style: italic; }
+
+.header-date {
+font-size: 0.75rem;
+color: var(--muted);
+letter-spacing: 0.1em;
+text-transform: uppercase;
+}
+
+.progress-bar {
+background: white;
+border-bottom: 1px solid #f0e8e8;
+padding: 0 32px;
+display: flex;
+gap: 0;
+overflow-x: auto;
+}
+
+.step-tab {
+padding: 14px 20px;
+font-size: 0.72rem;
+font-weight: 500;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--muted);
+border-bottom: 3px solid transparent;
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.step-tab.active { color: var(--deep-rose); border-bottom-color: var(--deep-rose); }
+.step-tab.completed { color: var(--gold); border-bottom-color: var(--gold); }
+
+.step-num {
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: currentColor;
+color: white;
+font-size: 0.65rem;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 700;
+}
+
+.step-tab.active .step-num { background: var(--deep-rose); color: white; }
+.step-tab.completed .step-num { background: var(--gold); color: white; }
+.step-tab:not(.active):not(.completed) .step-num { background: #e8e0e0; color: var(--muted); }
+
+.main { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+.step-panel { display: none; animation: fadeIn 0.3s ease; }
+.step-panel.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--charcoal); margin-bottom: 6px; }
+.panel-title em { color: var(--deep-rose); font-style: italic; }
+.panel-subtitle { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; font-weight: 300; }
+
+.btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 12px 24px;
+border-radius: 6px;
+font-family: 'DM Sans', sans-serif;
+font-size: 0.85rem;
+font-weight: 500;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+letter-spacing: 0.03em;
+}
+
+.btn-primary { background: var(--deep-rose); color: white; }
+.btn-primary:hover { background: #b04f65; transform: translateY(-1px); }
+.btn-secondary { background: var(--soft-gold); color: var(--charcoal); }
+.btn-secondary:hover { background: var(--gold); color: white; }
+.btn-outline { background: transparent; color: var(--deep-rose); border: 1.5px solid var(--deep-rose); }
+.btn-outline:hover { background: var(--deep-rose); color: white; }
+.btn-large { padding: 16px 36px; font-size: 0.95rem; }
+
+.trend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+
+.trend-card {
+background: white;
+border: 2px solid #f0e8e8;
+border-radius: 12px;
+padding: 20px;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.trend-card:hover { border-color: var(--rose); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,90,114,0.12); }
+.trend-card.selected { border-color: var(--deep-rose); background: #fff5f7; }
+
+.trend-emoji { font-size: 1.8rem; margin-bottom: 10px; }
+.trend-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; }
+.trend-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+.trend-source { margin-top: 10px; font-size: 0.7rem; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin: 24px 0; }
+
+.product-card {
+background: white;
+border: 2px solid #f0e8e8;
+border-radius: 10px;
+overflow: hidden;
+cursor: pointer;
+transition: all 0.2s;
+position: relative;
+}
+.product-card:hover { border-color: var(--rose); }
+.product-card.selected { border-color: var(--deep-rose); }
+.product-card.deselected { opacity: 0.4; border-color: #e0d8d8; }
+
+.product-img {
+width: 100%;
+height: 140px;
+background: linear-gradient(135deg, var(--blush), var(--soft-gold));
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 2.5rem;
+}
+
+.product-info { padding: 10px 12px; }
+.product-name { font-size: 0.78rem; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; line-height: 1.3; }
+.product-brand { font-size: 0.7rem; color: var(--muted); }
+.product-price { font-size: 0.78rem; color: var(--deep-rose); font-weight: 500; margin-top: 4px; }
+
+.check-badge {
+position: absolute;
+top: 8px;
+right: 8px;
+width: 22px;
+height: 22px;
+background: var(--deep-rose);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 0.7rem;
+opacity: 0;
+transition: opacity 0.2s;
+}
+
+.product-card.selected .check-badge { opacity: 1; }
+
+.content-section { background: white; border: 1px solid #f0e8e8; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.content-section-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--charcoal); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+.pin-list { display: flex; flex-direction: column; gap: 10px; }
+.pin-item { display: flex; gap: 12px; align-items: flex-start; }
+
+.pin-num {
+min-width: 24px;
+height: 24px;
+background: var(--blush);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.7rem;
+font-weight: 600;
+color: var(--deep-rose);
+margin-top: 8px;
+}
+
+.pin-text {
+flex: 1;
+padding: 10px 14px;
+background: var(--cream);
+border: 1px solid #f0e8e8;
+border-radius: 8px;
+font-size: 0.82rem;
+line-height: 1.5;
+color: var(--charcoal);
+resize: vertical;
+font-family: 'DM Sans', sans-serif;
+min-height: 44px;
+}
+
+.pin-text:focus { outline: none; border-color: var(--rose); background: white; }
+
+textarea {
+width: 100%;
+padding: 12px 16px;
+background: var(--cream);
+border: 1px solid #f0e8e8;
+border-radius: 8px;
+font-size: 0.85rem;
+line-height: 1.6;
+color: var(--charcoal);
+resize: vertical;
+font-family: 'DM Sans', sans-serif;
+}
+
+textarea:focus { outline: none; border-color: var(--rose); background: white; }
+
+.hashtag-box { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px; background: var(--cream); border: 1px solid #f0e8e8; border-radius: 8px; }
+.hashtag { background: var(--blush); color: var(--deep-rose); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+
+.carousel-preview { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0 16px; }
+
+.slide {
+min-width: 180px;
+height: 220px;
+border-radius: 12px;
+overflow: hidden;
+position: relative;
+cursor: pointer;
+border: 2px solid transparent;
+transition: border-color 0.2s;
+}
+
+.slide.active-slide { border-color: var(--deep-rose); }
+
+.slide-bg {
+width: 100%;
+height: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 16px;
+text-align: center;
+font-size: 2rem;
+}
+
+.slide-bg.s1 { background: linear-gradient(145deg, #f2c4ce, #e8899a); }
+.slide-bg.s2 { background: linear-gradient(145deg, #f0dfc0, #d4a96a); }
+.slide-bg.s3 { background: linear-gradient(145deg, #c8e6e0, #85c1b5); }
+.slide-bg.s4 { background: linear-gradient(145deg, #d4c8f0, #9985c4); }
+.slide-bg.s5 { background: linear-gradient(145deg, #f2c4ce, #c45c72); }
+
+.slide-text { font-family: 'Playfair Display', serif; font-size: 0.75rem; color: white; margin-top: 10px; line-height: 1.4; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.slide-num { position: absolute; bottom: 8px; right: 10px; font-size: 0.65rem; color: rgba(255,255,255,0.7); }
+
+.publish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+
+.publish-card { background: white; border: 2px solid #f0e8e8; border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+.publish-card-info { display: flex; align-items: center; gap: 12px; }
+.publish-icon { font-size: 1.6rem; }
+.publish-label { font-weight: 500; font-size: 0.88rem; color: var(--charcoal); }
+.publish-sublabel { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+.toggle { width: 44px; height: 24px; background: #e0d8d8; border-radius: 12px; cursor: pointer; position: relative; transition: background 0.2s; }
+.toggle.on { background: var(--deep-rose); }
+.toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle.on::after { left: 23px; }
+
+.publish-btn {
+width: 100%;
+padding: 20px;
+background: linear-gradient(135deg, var(--deep-rose), #a04060);
+color: white;
+border: none;
+border-radius: 12px;
+font-family: 'Playfair Disp
+
+font-size: 1.2rem;
+cursor: pointer;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+}
+
+.publish-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(196,92,114,0.35); }
+
+.loading { display: flex; align-items: center; gap: 12px; padding: 20px; color: var(--muted); font-size: 0.88rem; }
+
+.spinner { width: 20px; height: 20px; border: 2px solid var(--blush); border-top-color: var(--deep-rose); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #f0e8e8; }
+
+.theme-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--soft-gold); color: var(--charcoal); padding: 8px 16px; border-radius: 20px; font-size: 0.82rem; font-weight: 500; margin-bottom: 20px; }
+
+.select-count { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+
+.success-banner { background: linear-gradient(135deg, #d4f0e8, #a8e0cc); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
+.success-banner h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #2d6b55; margin-bottom: 8px; }
+.success-banner p { color: #3d8b6e; font-size: 0.85rem; }
+
+@media (max-width: 600px) {
+.publish-grid { grid-template-columns: 1fr; }
+.panel-title { font-size: 1.4rem; }
+header { padding: 14px 16px; }
+.main { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">Jackie's <span>Affiliate Studio</span></div>
+<div class="header-date" id="headerDate"></div>
+</header>
+
+<nav class="progress-bar">
+<div class="step-tab active" onclick="goToStep(1)" id="tab1"><div class="step-num">1</div> Discover Trends</div>
+<div class="step-tab" onclick="goToStep(2)" id="tab2"><div class="step-num">2</div> Pick Products</div>
+<div class="step-tab" onclick="goToStep(3)" id="tab3"><div class="step-num">3</div> Generate Content</div>
+<div class="step-tab" onclick="goToStep(4)" id="tab4"><div class="step-num">4</div> Instagram Slides</div>
+<div class="step-tab" onclick="goToStep(5)" id="tab5"><div class="step-num">5</div> Publish</div>
+</nav>
+
+<main class="main">
+
+<div class="step-panel active" id="step1">
+<h1 class="panel-title">Today's <em>Fashion Trends</em></h1>
+<p class="panel-subtitle">AI scanned Vogue, Revolve, and more — here's what's trending today</p>
+<button class="btn btn-primary" onclick="discoverTrends()" id="discoverBtn">✨ Discover Today's Trends</button>
+<div id="trendsLoading" style="display:none" class="loading"><div class="spinner"></div> Scanning Vogue, Revolve, Net-a-Porter...</div>
+<div class="trend-grid" id="trendGrid"></div>
+<div class="nav-row" id="step1Nav" style="display:none">
+<div></div>
+<button class="btn btn-primary btn-large" onclick="goToStep(2)">Next: Pick Products →</button>
+</div>
+</div>
+
+<div class="step-panel" id="step2">
+<h1 class="panel-title">Pick Your <em>Products</em></h1>
+<div id="selectedThemeBadge" class="theme-badge">🌸 Loading theme...</div>
+<p class="panel-subtitle">All 15 products are selected — tap any to deselect</p>
+<p class="select-count" id="selectCount">15 of 15 selected</p>
+<div class="product-grid" id="productGrid"></div>
+<div class="nav-row">
+<button class="btn btn-outline" onclick="goToStep(1)">← Back</button>
+<button class="btn btn-primary btn-large" onclick="goToStep(3)">Next: Generate Content →</button>
+</div>
+</div>
+
+<div class="step-panel" id="step3">
+<h1 class="panel-title">Your <em>Content</em></h1>
+<p class="panel-subtitle">AI-generated and ready to edit — everything is yours to tweak</p>
+<button class="btn btn-secondary" onclick="generateContent()" id="generateBtn" style="margin-bottom:24px">✨ Generate All Content</button>
+<div id="contentLoading" style="display:
+
+<div id="contentArea" style="display:none">
+<div class="content-section">
+<div class="content-section-title">📌 Pinterest Pin Descriptions</div>
+<div class="pin-list" id="pinList"></div>
+</div>
+<div class="content-section">
+<div class="content-section-title">📋 Pinterest Board Description</div>
+<textarea id="boardDesc" rows="3"></textarea>
+</div>
+<div class="content-section">
+<div class="content-section-title">📸 Instagram Caption</div>
+<textarea id="igCaption" rows="4"></textarea>
+</div>
+<div class="content-section">
+<div class="content-section-title">🏷️ Hashtags</div>
+<div class="hashtag-box" id="hashtagBox"></div>
+</div>
+</div>
+<div class="nav-row">
+<button class="btn btn-outline" onclick="goToStep(2)">← Back</button>
+<button class="btn btn-primary btn-large" onclick="goToStep(4)">Next: Instagram Slides →</button>
+</div>
+</div>
+
+<div class="step-panel" id="step4">
+<h1 class="panel-title">Instagram <em>Carousel</em></h1>
+<p class="panel-subtitle">5 slides for your carousel — tap a slide to edit its text</p>
+<div class="carousel-preview" id="carouselPreview"></div>
+<div class="content-section" id="slideEditor">
+<div class="content-section-title">✏️ Edit Slide Text</div>
+<textarea id="slideText" rows="3" placeholder="Edit the selected slide text here..."></textarea>
+<div style="margin-top:10px;">
+<button class="btn btn-secondary" onclick="updateSlide()">Update Slide</button>
+</div>
+</div>
+<div class="nav-row">
+<button class="btn btn-outline" onclick="goToStep(3)">← Back</button>
+<button class="btn btn-primary btn-large" onclick="goToStep(5)">Next: Publish →</button>
+</div>
+</div>
+
+<div class="step-panel" id="step5">
+<h1 class="panel-title">Ready to <em>Publish</em></h1>
+<p class="panel-subtitle">Toggle what you want to post, then hit publish!</p>
+<div class="publish-grid">
+<div class="publish-card">
+<div class="publish-card-info">
+<div class="publish-icon">📌</div>
+<div><div class="publish-label">Pinterest Pins</div><div class="publish-sublabel" id="pinCount">15 pins ready</div></div>
+</div>
+<div class="toggle on" id="togglePins" onclick="toggleSwitch('togglePins')"></div>
+</div>
+<div class="publish-card">
+<div class="publish-card-info">
+<div class="publish-icon">🎠</div>
+<div><div class="publish-label">IG Carousel</div><div class="publish-sublabel">5 slides</div></div>
+</div>
+<div class="toggle on" id="toggleCarousel" onclick="toggleSwitch('toggleCarousel')"></div>
+</div>
+<div class="publish-card">
+<div class="publish-card-info">
+<div class="publish-icon">📖</div>
+<div><div class="publish-label">IG Stories</div><div class="publish-sublabel">Same images</div></div>
+</div>
+<div class="toggle on" id="toggleStories" onclick="toggleSwitch('toggleStories')"></div>
+</div>
+<div class="publish-card">
+<div class="publish-card-info">
+<div class="publish-icon">🔗</div>
+<div><div class="publish-label">Linktree Links</div><div class="publish-sublabel">Affiliate links</div></div>
+</div>
+<div class="toggle on" id="toggleLinktree" onclick="toggleSwitch('toggleLinktree')"></div>
+</div>
+</div>
+<div id="publishSuccess" style="display:none">
+<div class="success-banner">
+<h3>🎉 Everything Posted!</h3>
+<p>Your pins, carousel, stories and links are all live. Great work today, Jackie!</p>
+</div>
+</div>
+<button class="publish-btn" onclick="publishAll()" id="publishBtn">🚀 Publish Everything</button>
+<div class="nav-row">
+<button class="btn btn-outline" onclick="goToStep(4)">← Back</button>
+<button class="btn btn-secondary" onclick="startOver()">Start New Day ✨</button>
+</div>
+</div>
+
+</main>
+
+<script>
+let currentStep = 1;
+let selectedTheme = '';
+let selectedProducts = [];
+let slideTexts = ['', '', '', '', ''];
+let activeSlide = 0;
+
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now = new Date();
+document.getElementById('headerDate').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+
+const trends = [
+{ emoji: '🪡', name: 'Silk Pants for Spr
+
+
+{ emoji: '👒', name: 'Wide Brim Hat Moment', desc: 'Oversized straw and felt hats styled with everything from mini dresses to blazers', source: 'Revolve' },
+{ emoji: '👗', name: 'Sheer Layering', desc: 'Transparent fabrics worn over slip dresses and bodysuits for a dreamy layered effect', source: 'Net-a-Porter' },
+{ emoji: '👠', name: 'Ballet Flat Revival', desc: 'The classic ballet flat gets a luxe update in satin, patent and embellished styles', source: 'Vogue' },
+{ emoji: '💚', name: 'Sage & Olive Tones', desc: 'Muted green palette taking over spring wardrobes in every silhouette', source: 'Revolve' },
+{ emoji: '🎀', name: 'Bow Everything', desc: 'Oversized bows on bags, shoes, tops and skirts — the sweeter the better', source: 'List.com' },
+];
+
+const productTemplates = [
+{ emoji: '👗', name: 'Silk Wide Leg Trousers', brand: 'Revolve', price: '$148' },
+{ emoji: '💼', name: 'Cream Satin Blouse', brand: 'Vince', price: '$195' },
+{ emoji: '👠', name: 'Pointed Toe Mule', brand: 'Steve Madden', price: '$89' },
+{ emoji: '🧥', name: 'Linen Blazer', brand: 'Mango', price: '$79' },
+{ emoji: '👜', name: 'Mini Shoulder Bag', brand: 'Coach', price: '$295' },
+{ emoji: '🧣', name: 'Silk Scarf', brand: 'Free People', price: '$68' },
+{ emoji: '💍', name: 'Gold Hoop Earrings', brand: 'Mejuri', price: '$58' },
+{ emoji: '👒', name: 'Wide Brim Sun Hat', brand: 'Anthropologie', price: '$78' },
+{ emoji: '🩱', name: 'Ruched Midi Dress', brand: 'ASOS', price: '$65' },
+{ emoji: '🧤', name: 'Strappy Sandals', brand: 'Schutz', price: '$110' },
+{ emoji: '🌸', name: 'Floral Mini Skirt', brand: 'Zara', price: '$45' },
+{ emoji: '💎', name: 'Pearl Necklace', brand: 'Gorjana', price: '$88' },
+{ emoji: '🪞', name: 'Square Sunglasses', brand: 'Quay', price: '$55' },
+{ emoji: '✨', name: 'Sequin Cami Top', brand: 'NBD', price: '$95' },
+{ emoji: '🎀', name: 'Bow Ballet Flats', brand: 'Sam Edelman', price: '$90' },
+];
+
+function goToStep(step) {
+document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+document.getElementById('step' + step).classList.add('active');
+document.getElementById('tab' + step).classList.add('active');
+for (let i = 1; i < step; i++) document.getElementById('tab' + i).classList.add('completed');
+currentStep = step;
+if (step === 2) buildProductGrid();
+if (step === 4) buildCarousel();
+if (step === 5) updatePublishCount();
+window.scrollTo(0, 0);
+}
+
+function discoverTrends() {
+document.getElementById('discoverBtn').style.display = 'none';
+document.getElementById('trendsLoading').style.display = 'flex';
+setTimeout(() => {
+document.getElementById('trendsLoading').style.display = 'none';
+buildTrendGrid();
+document.getElementById('step1Nav').style.display = 'flex';
+}, 2000);
+}
+
+function buildTrendGrid() {
+const grid = document.getElementById('trendGrid');
+grid.innerHTML = '';
+trends.forEach((t, i) => {
+const card = document.createElement('div');
+card.className = 'trend-card';
+card.innerHTML = `<div class="trend-emoji">${t.emoji}</div><div class="trend-name">${t.name}</div><div class="trend-desc">${t.desc}</div><div class="trend-source">📰 ${t.source}</div>`;
+card.onclick = () => selectTrend(card, t.name);
+grid.appendChild(card);
+});
+}
+
+function selectTrend(card, name) {
+document.querySelectorAll('.trend-card').forEach(c => c.classList.remove('selected'));
+card.classList.add('selected');
+selectedTheme = name;
+document.getElementById('step1Nav').style.display = 'flex';
+}
+
+function buildProductGrid() {
+const grid = document.getElementById('productGrid');
+grid.innerHTML = '';
+document.getElementById('selectedThemeBadge').textContent = '🌸 ' + (selectedTheme || "Today's Theme");
+if (selectedProducts.length === 0) selectedProducts = productTemplates.map((_, i) => i);
+productTemplates.forEach((p, i) => {
+const card = document.createElement('div');
+card.className = 'product-card ' + (selectedProducts.includes(i) ? 'selected' : 'deselected');
+card.id = 'product' + i;
+card.innerHTML = `<div class="product-img">${p.emoji}</div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-brand">${p.brand}</div><div class="product-price">${p.price}</div></div><div class="check-badge">✓</div>`;
+card.onclick = () => toggleProduct(i, card);
+grid.appendChild(card);
+});
+updateSelectCount();
+}
+
+function toggleProduct(i, card) {
+if (selectedProducts.includes(i)) {
+selectedProducts = selectedProducts.filter(x => x !== i);
+card.classList.remove('selected');
+card.classList.add('deselected');
+} else {
+selectedProducts.push(i);
+card.classList.add('selected');
+card.classList.remove('deselected');
+}
+updateSelectCount();
+}
+
+function updateSelectCount() {
+document.getElementById('selectCount').textContent = `${selectedProducts.length} of 15 selected`;
+}
+
+function generateContent() {
+document.getElementById('generateBtn').style.display = 'none';
+document.getElementById('contentLoading').style.display = 'flex';
+setTimeout(() => {
+document.getElementById('contentLoading').style.display = 'none';
+document.getElementById('contentArea').style.display = 'block';
+buildContentArea();
+}, 2500);
+}
+
+function buildContentArea() {
+const theme = selectedTheme || 'Spring Fashion Trends';
+const selected = selectedProducts.map(i => productTemplates[i]);
+const pinList = document.getElementById('pinList');
+pinList.innerHTML = '';
+selected.slice(0, 15).forEach((p, i) => {
+const item = document.createElement('div');
+item.className = 'pin-item';
+item.innerHTML = `<div class="pin-num">${i+1}</div><textarea class="pin-text" rows="2">${p.name} from ${p.brand} — the perfect piece for your ${theme} wardrobe. Shop the link in bio! ✨ #SpringFashion #${p.brand.replace(/\s/g,'')} #OOTD</textarea>`;
+pinList.appendChild(item);
+});
+document.getElementById('boardDesc').value = `Your ultimate guide to ${theme} — curated with the season's most coveted pieces from top brands. From effortless daytime looks to elevated evening styles, find everything you need to refresh your wardrobe this spring. Shop all links in bio! 💕`;
+document.getElementById('igCaption').value = `Spring is calling and your wardrobe is ready to answer ✨ I've rounded up the most beautiful pieces for ${theme} — every single one is linked in my bio so you can shop directly! Which one is your favorite? Drop a 💕 below! #SpringFashion #AffiliateLink #FashionInspo`;
+const hashtags = ['#SpringFashion','#OOTD','#FashionInspo','#StyleBlogger','#AffiliateFashion','#ShopMyStyle','#SpringOutfit','#FashionBlogger','#StyleInspo','#NewArrivals','#FashionFinds','#WardrobeGoals','#SpringVibes','#ShopNow','#FashionLover'];
+const box = document.getElementById('hashtagBox');
+box.innerHTML = '';
+hashtags.forEach(h => { const tag = document.createElement('span'); tag.className = 'hashtag'; tag.textContent = h; box.appendChild(tag); });
+slideTexts = [selectedTheme + ' 🌸', 'Top Picks This Season ✨', 'Shop the Look 💕', 'Links in Bio 🔗', 'New Arrivals Just Dropped 🛍️'];
+}
+
+function buildCarousel() {
+const preview = document.getElementById('carouselPreview');
+preview.innerHTML = '';
+const emojis = ['🌸','✨','💕','🔗','🛍️'];
+for (let i = 0; i < 5; i++) {
+const slide = document.createElement('div');
+slide.className = 'slide' + (i === 0 ? ' active-slide' : '');
+slide.id = 'slide' + i;
+slide.innerHTML = `<div class="slide-bg s${i+1}"><div>${emojis[i]}</div><div class="slide-text">${slideTexts[i] || 'Slide ' + (i+1)}</div></div><div class="slide-num">${i+1}/5</div>`;
+slide.onclick = () => selectSlide(i);
+preview.appendChild(slide);
+}
+document.getElementById('slideText').value = slideTexts[0];
+activeSlide = 0;
+}
+
+function selectSlide(i) {
+document.querySelectorAll('.slide').forEach(s => s.classList.remove('active-slide'));
+document.getElementById('slide' + i).classList.add('active-slide');
+activeSlide = i;
+document.getElementById('slideText').value = slideTexts[i];
+}
+
+function updateSlide() {
+slideTexts[activeSlide] = document.getElementById('slideText').value;
+buildCarousel();
+selectSlide(activeSlide);
+}
+
+function updatePublishCount() {
+document.getElementById('pinCount').textContent = selectedProducts.length + ' pins ready';
+}
+
+function toggleSwitch(id) {
+document.getElementById(id).classList.toggle('on');
+}
+
+function publishAll() {
+const btn = document.getElementById('publishBtn');
+btn.textContent = '⏳ Publishing...';
+btn.disabled = true;
+setTimeout(() => {
+document.getElementById('publishSuccess').style.display = 'block';
+btn.textContent = '✅ Published!';
+btn.style.background = 'linear-gradient(135deg, #3d8b6e, #2d6b55)';
+}, 2500);
+}
+
+function startOver() {
+selectedTheme = '';
+selectedProducts = [];
+slideTexts = ['','','','',''];
+document.getElementById('trendGrid').innerHTML = '';
+document.getElementById('discoverBtn').style.display = 'inline-flex';
+document.getElementById('step1Nav').style.display = 'none';
+document.getElementById('contentArea').style.display = 'none';
+document.getElementById('generateBtn').style.display = 'inline-flex';
+document.getElementById('publishSuccess').style.display = 'none';
+document.getElementById('publishBtn').textContent = '🚀 Publish Everything';
+document.getElementById('publishBtn').disabled = false;
+document.getElementById('publishBtn').style.background = '';
+document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('completed'));
+goToStep(1);
+}
+</script>
+</body>
+</html>
+
 
