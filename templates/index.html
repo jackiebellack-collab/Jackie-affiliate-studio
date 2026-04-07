@@ -531,7 +531,7 @@ textarea:focus { outline: none; border-color: var(--rose); background: white; }
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const now = new Date();
-    document.getElementById('headerDate').textContent = ${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()};
+document.getElementById('headerDate').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
 
     const trends = [
         { emoji: '🪡', name: 'Silk Pants for Spring', desc: 'Fluid silk trousers in champagne, ivory and blush tones dominating runway looks', source: 'Vogue' },
